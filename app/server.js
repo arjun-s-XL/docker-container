@@ -1,6 +1,5 @@
 let express = require('express');
 let path = require('path');
-let fs = require('fs');
 let MongoClient = require('mongodb').MongoClient;
 let bodyParser = require('body-parser');
 let app = express();
@@ -12,69 +11,36 @@ app.use(bodyParser.json());
 
 app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname, "index.html"));
-  });
-
-app.get('/profile-picture', function (req, res) {
-  let img = fs.readFileSync(path.join(__dirname, "images/profile-1.jpg"));
-  res.writeHead(200, {'Content-Type': 'image/jpg' });
-  res.end(img, 'binary');
 });
 
-// use when starting application locally
-let mongoUrlLocal = "mongodb://admin:password@localhost:27017";
-
-// use when starting application as docker container
-let mongoUrlDocker = "mongodb://admin:password@mongodb";
-
-// pass these options to mongo client connect request to avoid DeprecationWarning for current Server Discovery and Monitoring engine
+// MongoDB connection details
+let mongoUrlLocal = "mongodb://admin:password@192.168.0.105:27017";
 let mongoClientOptions = { useNewUrlParser: true, useUnifiedTopology: true };
-
-// "user-account" in demo with docker. "my-db" in demo with docker-compose
 let databaseName = "my-db";
 
-app.post('/update-profile', function (req, res) {
-  let userObj = req.body;
+app.post('/register', function (req, res) {
+    let userObj = req.body;
+    userObj['userid'] = 1; // Assigning a static user id for simplicity
 
-  MongoClient.connect(mongoUrlLocal, mongoClientOptions, function (err, client) {
-    if (err) throw err;
+    MongoClient.connect(mongoUrlLocal, mongoClientOptions, function (err, client) {
+        if (err) {
+            console.error("Database connection failed:", err);
+            return res.status(500).send("Database connection failed");
+        }
 
-    let db = client.db(databaseName);
-    userObj['userid'] = 1;
-
-    let myquery = { userid: 1 };
-    let newvalues = { $set: userObj };
-
-    db.collection("users").updateOne(myquery, newvalues, {upsert: true}, function(err, res) {
-      if (err) throw err;
-      client.close();
+        let db = client.db(databaseName);
+        db.collection("users").updateOne({ userid: 1 }, { $set: userObj }, { upsert: true }, function(err, result) {
+            if (err) {
+                console.error("Error updating the user:", err);
+                return res.status(500).send("Error updating the user");
+            }
+            client.close();
+            res.send(userObj);
+        });
     });
-
-  });
-  // Send response
-  res.send(userObj);
-});
-
-app.get('/get-profile', function (req, res) {
-  let response = {};
-  // Connect to the db
-  MongoClient.connect(mongoUrlLocal, mongoClientOptions, function (err, client) {
-    if (err) throw err;
-
-    let db = client.db(databaseName);
-
-    let myquery = { userid: 1 };
-
-    db.collection("users").findOne(myquery, function (err, result) {
-      if (err) throw err;
-      response = result;
-      client.close();
-
-      // Send response
-      res.send(response ? response : {});
-    });
-  });
 });
 
 app.listen(3000, function () {
-  console.log("app listening on port 3000!");
+    console.log("App listening on port 3000!");
 });
+
