@@ -7,6 +7,7 @@ let app = express();
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+
 app.use(bodyParser.json());
 
 app.get('/', function (req, res) {
@@ -19,8 +20,11 @@ let mongoClientOptions = { useNewUrlParser: true, useUnifiedTopology: true };
 let databaseName = "my-db";
 
 app.post('/register', function (req, res) {
-    let userObj = req.body;
-    userObj['userid'] = 1; // Assigning a static user id for simplicity
+    let userObj = {
+        name: req.body.name,
+        email: req.body.email,
+        interests: req.body.interests
+    };
 
     MongoClient.connect(mongoUrlLocal, mongoClientOptions, function (err, client) {
         if (err) {
@@ -29,10 +33,10 @@ app.post('/register', function (req, res) {
         }
 
         let db = client.db(databaseName);
-        db.collection("users").updateOne({ userid: 1 }, { $set: userObj }, { upsert: true }, function(err, result) {
+        db.collection("users").insertOne(userObj, function(err, result) {
             if (err) {
-                console.error("Error updating the user:", err);
-                return res.status(500).send("Error updating the user");
+                console.error("Error inserting the user:", err);
+                return res.status(500).send("Error inserting the user");
             }
             client.close();
             res.send(userObj);

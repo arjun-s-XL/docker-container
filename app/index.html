@@ -4,24 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Registration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #a1c4fd, #c2e9fb); /* Lighter gradient colors */
-            color: #333; /* Darker text for better contrast */
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f5dc; /* Beige background color */
+            color: #333; /* Darker text for contrast */
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
         }
         .container {
-            background: rgba(255, 255, 255, 0.9); /* Lighter background for the container */
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 10px;
-            padding: 20px;
+            padding: 30px;
             width: 90%;
             max-width: 500px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: #333; /* Darker title for better visibility */
         }
         .button {
             width: 100%;
@@ -29,24 +36,30 @@
             border-radius: 6px;
             font-size: 15px;
             margin-top: 20px;
-            background-color: #4CAF50;
+            background-color: #5c67f2; /* Button color */
             color: white;
             border: none;
             cursor: pointer;
             transition: background 0.3s;
+            font-weight: 600;
         }
         .button:hover {
-            background-color: #45a049;
+            background-color: #4a54e1; /* Darker shade on hover */
         }
         input, select {
             width: calc(100% - 20px);
-            height: 45px; /* Set height to 45px */
+            height: 45px;
             border-radius: 5px;
             padding: 10px;
             margin-top: 10px;
-            border: 1px solid #ccc; /* Added border for visibility */
+            border: 1px solid #ccc;
             font-size: 15px;
             background: rgba(230, 230, 230, 0.9);
+            transition: border 0.3s;
+        }
+        input:focus, select:focus {
+            border-color: #5c67f2; /* Focus border color */
+            outline: none;
         }
         hr {
             margin: 25px 0;
@@ -57,20 +70,20 @@
 <body>
     <div class='container'>
         <h1>User Registration</h1>
-        <span>Name: </span><input type="text" id='input-name' />
+        <span>Name: </span><input type="text" id='input-name' placeholder="Enter your name" />
         <hr />
-        <span>Email: </span><input type="email" id='input-email' />
+        <span>Email: </span><input type="email" id='input-email' placeholder="Enter your email" />
         <hr />
         <span>Interests: </span>
         <select id='input-interests'>
-            <option value="" disabled selected>Choose from the dropdown</option> <!-- Default option -->
+            <option value="" disabled selected>Choose from the dropdown</option>
             <option value="System Development">System Development</option>
             <option value="App Development">App Development</option>
             <option value="Quality Assurance">Quality Assurance</option>
             <option value="Automation">Automation</option>
             <option value="DevOps">DevOps</option>
             <option value="Artificial Intelligence">Artificial Intelligence</option>
-            <option value="Project Management & Operations">Project Management & Operations</option> <!-- Combined option -->
+            <option value="Project Management & Operations">Project Management & Operations</option>
         </select>
         <hr />
         <button class='button' onclick="handleRegister()">Register</button>
